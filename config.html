@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self'; script-src 'self';" />
+  <title>Configuración del guion</title>
+  <link rel="stylesheet" href="config.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Guion del teleprompter</h1>
+      <p class="hint">Escribí el texto directamente o cargalo desde un archivo .txt. Los cambios se guardan automáticamente.</p>
+    </header>
+
+    <div class="toolbar">
+      <button id="btnLoadFile" type="button">📂 Cargar archivo .txt</button>
+      <span id="saveStatus" class="save-status">Sin cambios</span>
+    </div>
+
+    <textarea id="scriptText" placeholder="Escribí o pegá aquí el guion de tu presentación…"></textarea>
+
+    <footer>
+      <span class="footer-hint">Ctrl+Shift+E vuelve a abrir esta ventana en cualquier momento.</span>
+    </footer>
+  </div>
+  <script src="config.js"></script>
+</body>
+</html>

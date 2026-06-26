@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self'; script-src 'self';" />
+  <title>Prompter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="panel">
+    <div id="viewport">
+      <div id="content">
+        <!-- El guion se inyecta dinámicamente desde renderer.js vía IPC.
+             Mientras carga, mostramos un placeholder. -->
+        <p id="emptyState">Sin guion cargado todavía. Abrí la configuración (botón ⚙ o Ctrl+Shift+E) para escribir o cargar tu texto.</p>
+      </div>
+    </div>
+    <div id="status">Cargando…</div>
+    <button id="btnConfig" type="button" title="Configurar guion (Ctrl+Shift+E)">⚙</button>
+    <div class="resize-edge edge-n"></div>
+    <div class="resize-edge edge-s"></div>
+    <div class="resize-edge edge-e"></div>
+    <div class="resize-edge edge-w"></div>
+    <div class="resize-edge edge-ne"></div>
+    <div class="resize-edge edge-nw"></div>
+    <div class="resize-edge edge-se"></div>
+    <div class="resize-edge edge-sw"></div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

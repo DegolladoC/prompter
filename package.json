@@ -1,0 +1,58 @@
+{
+  "name": "prompter-spike",
+  "version": "1.0.0",
+  "description": "Teleprompter overlay invisible en screen-share (Windows 11)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "build:dir": "electron-builder --win dir"
+  },
+  "build": {
+    "appId": "com.mayam.prompter",
+    "productName": "Prompter",
+    "files": [
+      "main.js",
+      "preload.js",
+      "store.js",
+      "index.html",
+      "renderer.js",
+      "styles.css",
+      "config.html",
+      "config.js",
+      "config.css"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true
+    }
+  },
+  "author": "MAYAM",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}
