@@ -9,12 +9,14 @@
 </head>
 <body>
   <div class="panel">
-    <div id="viewport">
-      <div id="content">
-        <!-- El guion se inyecta dinámicamente desde renderer.js vía IPC.
-             Mientras carga, mostramos un placeholder. -->
-        <p id="emptyState">Sin guion cargado todavía. Abrí la configuración (botón ⚙ o Ctrl+Shift+E) para escribir o cargar tu texto.</p>
+    <div class="main-area">
+      <div id="viewport">
+        <div id="content">
+          <p id="emptyState">Sin guion cargado todavía. Abrí la configuración (botón ⚙ o Ctrl+Shift+E) para escribir o cargar tu texto.</p>
+        </div>
       </div>
+      <!-- Tira de marcadores: dots clickeables para saltar a secciones -->
+      <div id="markerStrip"></div>
     </div>
     <div id="status">Cargando…</div>
     <button id="btnConfig" type="button" title="Configurar guion (Ctrl+Shift+E)">⚙</button>

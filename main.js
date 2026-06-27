@@ -15,6 +15,8 @@
 // - IPC para comunicar overlay <-> config <-> main.
 
 const { app, BrowserWindow, globalShortcut, screen, ipcMain, dialog } = require('electron');
+
+let clickThroughActive = false;
 const path = require('path');
 const fs = require('fs');
 const store = require('./store');
@@ -144,6 +146,19 @@ ipcMain.handle('config:close', () => {
   return true;
 });
 
+ipcMain.handle('settings:get', () => {
+  const data = store.load();
+  return { opacity: data.opacity, fontSize: data.fontSize };
+});
+
+ipcMain.handle('settings:set', (_event, settings) => {
+  store.save(settings);
+  if (overlayWin && !overlayWin.isDestroyed()) {
+    overlayWin.webContents.send('settings:updated', settings);
+  }
+  return true;
+});
+
 // ---------- Ciclo de vida de la app ----------
 
 app.whenReady().then(() => {
@@ -158,6 +173,18 @@ app.whenReady().then(() => {
   // Atajo global para abrir/enfocar la ventana de configuración.
   globalShortcut.register('CommandOrControl+Shift+E', () => {
     createConfigWindow();
+  });
+
+  // Click-through: los clics pasan a la ventana de atrás pero el overlay
+  // sigue visible. Se activa/desactiva con Ctrl+Shift+C (global, funciona
+  // sin importar qué ventana tenga el foco).
+  globalShortcut.register('CommandOrControl+Shift+C', () => {
+    clickThroughActive = !clickThroughActive;
+    if (overlayWin && !overlayWin.isDestroyed()) {
+      overlayWin.setIgnoreMouseEvents(clickThroughActive, { forward: true });
+      if (!clickThroughActive) overlayWin.focus();
+      overlayWin.webContents.send('overlay:clickThroughChanged', clickThroughActive);
+    }
   });
 
   app.on('activate', () => {

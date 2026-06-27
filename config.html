@@ -19,10 +19,23 @@
       <span id="saveStatus" class="save-status">Sin cambios</span>
     </div>
 
-    <textarea id="scriptText" placeholder="Escribí o pegá aquí el guion de tu presentación…"></textarea>
+    <textarea id="scriptText" placeholder="Escribí o pegá aquí el guion de tu presentación…&#10;&#10;Tip: las líneas que empiecen con &quot;- &quot; (guión + espacio) se convierten en marcadores de sección."></textarea>
+
+    <div class="settings-group">
+      <div class="slider-row">
+        <label for="sliderOpacity">Opacidad del panel</label>
+        <input type="range" id="sliderOpacity" min="25" max="100" step="1" value="74">
+        <span id="valOpacity" class="slider-val">74%</span>
+      </div>
+      <div class="slider-row">
+        <label for="sliderFontSize">Tamaño de fuente</label>
+        <input type="range" id="sliderFontSize" min="16" max="56" step="1" value="30">
+        <span id="valFontSize" class="slider-val">30px</span>
+      </div>
+    </div>
 
     <footer>
-      <span class="footer-hint">Ctrl+Shift+E vuelve a abrir esta ventana en cualquier momento.</span>
+      <span class="footer-hint">Ctrl+Shift+E: abrir config  ·  Ctrl+Shift+C: activar/desactivar click-through</span>
     </footer>
   </div>
   <script src="config.js"></script>

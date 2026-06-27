@@ -1,19 +1,18 @@
-// config.js — corre dentro de la ventana de configuración.
-// Carga el guion guardado, permite editarlo o reemplazarlo desde un
-// archivo .txt, y lo guarda en disco automáticamente (con debounce
-// para no escribir a disco en cada tecla).
+// config.js — ventana de configuración: guion + ajustes de apariencia.
 
-const textArea = document.getElementById('scriptText');
-const btnLoadFile = document.getElementById('btnLoadFile');
-const saveStatus = document.getElementById('saveStatus');
+const textArea       = document.getElementById('scriptText');
+const btnLoadFile    = document.getElementById('btnLoadFile');
+const saveStatus     = document.getElementById('saveStatus');
+const sliderOpacity  = document.getElementById('sliderOpacity');
+const valOpacity     = document.getElementById('valOpacity');
+const sliderFontSize = document.getElementById('sliderFontSize');
+const valFontSize    = document.getElementById('valFontSize');
 
-let saveTimer = null;
-const SAVE_DEBOUNCE_MS = 600;
+let scriptTimer   = null;
+let settingsTimer = null;
+const DEBOUNCE_MS = 600;
 
-async function init() {
-  const saved = await window.prompterAPI.getScript();
-  textArea.value = saved || '';
-}
+// --- Estado del indicador de guardado ---
 
 function setStatus(state) {
   saveStatus.classList.remove('saving', 'saved');
@@ -28,32 +27,82 @@ function setStatus(state) {
   }
 }
 
-function scheduleSave() {
+// --- Guardado del guion (debounce) ---
+
+function scheduleSaveScript() {
   setStatus('saving');
-  if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => {
+  if (scriptTimer) clearTimeout(scriptTimer);
+  scriptTimer = setTimeout(async () => {
     await window.prompterAPI.setScript(textArea.value);
     setStatus('saved');
-  }, SAVE_DEBOUNCE_MS);
+  }, DEBOUNCE_MS);
 }
 
-textArea.addEventListener('input', scheduleSave);
+// --- Guardado de ajustes (debounce) ---
+
+function scheduleSaveSettings() {
+  setStatus('saving');
+  if (settingsTimer) clearTimeout(settingsTimer);
+  settingsTimer = setTimeout(async () => {
+    const opacity  = parseInt(sliderOpacity.value, 10) / 100;
+    const fontSize = parseInt(sliderFontSize.value, 10);
+    await window.prompterAPI.setSettings({ opacity, fontSize });
+    setStatus('saved');
+  }, DEBOUNCE_MS);
+}
+
+// --- Listeners ---
+
+textArea.addEventListener('input', scheduleSaveScript);
+
+sliderOpacity.addEventListener('input', () => {
+  valOpacity.textContent = `${sliderOpacity.value}%`;
+  scheduleSaveSettings();
+});
+
+sliderFontSize.addEventListener('input', () => {
+  valFontSize.textContent = `${sliderFontSize.value}px`;
+  scheduleSaveSettings();
+});
 
 btnLoadFile.addEventListener('click', async () => {
   const content = await window.prompterAPI.loadScriptFromFile();
   if (content !== null) {
     textArea.value = content;
-    scheduleSave();
+    scheduleSaveScript();
   }
 });
 
-// Por si el usuario cierra la ventana justo después de tipear, antes de
-// que dispare el debounce: guardamos de inmediato al perder el foco.
 window.addEventListener('beforeunload', () => {
-  if (saveTimer) {
-    clearTimeout(saveTimer);
+  if (scriptTimer) {
+    clearTimeout(scriptTimer);
     window.prompterAPI.setScript(textArea.value);
   }
+  if (settingsTimer) {
+    clearTimeout(settingsTimer);
+    const opacity  = parseInt(sliderOpacity.value, 10) / 100;
+    const fontSize = parseInt(sliderFontSize.value, 10);
+    window.prompterAPI.setSettings({ opacity, fontSize });
+  }
 });
+
+// --- Carga inicial ---
+
+async function init() {
+  const [saved, settings] = await Promise.all([
+    window.prompterAPI.getScript(),
+    window.prompterAPI.getSettings(),
+  ]);
+
+  textArea.value = saved || '';
+
+  const opacityPct = Math.round((settings.opacity ?? 0.74) * 100);
+  sliderOpacity.value    = opacityPct;
+  valOpacity.textContent = `${opacityPct}%`;
+
+  const fontSize = settings.fontSize ?? 30;
+  sliderFontSize.value    = fontSize;
+  valFontSize.textContent = `${fontSize}px`;
+}
 
 init();

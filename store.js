@@ -13,6 +13,8 @@ const FILE_NAME = 'prompter-data.json';
 
 const DEFAULTS = {
   script: '',
+  opacity: 0.74,
+  fontSize: 30,
 };
 
 function getFilePath() {
